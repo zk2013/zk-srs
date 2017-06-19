@@ -35,6 +35,7 @@ using namespace std;
 #include <srs_kernel_log.hpp>
 #include <srs_kernel_error.hpp>
 #include <srs_app_rtmp_conn.hpp>
+#include <srs_app_mars_conn.hpp>
 #include <srs_app_config.hpp>
 #include <srs_kernel_utility.hpp>
 #include <srs_app_http_api.hpp>
@@ -107,6 +108,8 @@ std::string srs_listener_type2string(SrsListenerType type)
             return "RTSP";
         case SrsListenerFlv:
             return "HTTP-FLV";
+        case SrsListenerLiveChat:
+            return "LIVE-CHAT";
         default:
             return "UNKONWN";
     }
@@ -1149,6 +1152,29 @@ int SrsServer::listen_live_chat()
 {
     int ret = ERROR_SUCCESS;
 
+    close_listeners(SrsListenerLiveChat);
+
+    std::vector<SrsConfDirective *>::iterator it;
+    std::vector<SrsConfDirective *> danmu_svrs = _srs_config->get_danmu_svrs();
+    for (it = danmu_svrs.begin(); it != danmu_svrs.end(); ++it)
+    {
+        SrsConfDirective *danmu_svr = *it;
+        SrsListener* listener = new SrsBufferListener(this, SrsListenerLiveChat);
+        listeners.push_back(listener);
+
+        int port = _srs_config->get_danmu_svr_listen(danmu_svr);
+        if (port <= 0) {
+            ret = ERROR_DANMU_SVR_PORT;
+            srs_error("invalid danmu svr port %d. ret=%d", port, ret);
+            return ret;
+        }
+
+        if ((ret = listener->listen("0.0.0.0", port)) != ERROR_SUCCESS)
+        {
+            srs_error("danmu svr listen at port %d failed. ret=%d", port, ret);
+            return ret;
+        }
+    }
     return ret;
 }
 
@@ -1317,7 +1343,9 @@ SrsConnection* SrsServer::fd2conn(SrsListenerType type, st_netfd_t stfd)
         conn = new SrsHttpApi(this, stfd, http_api_mux, ip);
     } else if (type == SrsListenerHttpStream) {
         conn = new SrsResponseOnlyHttpConn(this, stfd, http_server, ip);
-    } else {
+    } else if (type == SrsListenerLiveChat) {
+        conn = new SrsMarsConn(this, stfd,ip);
+    }else {
         srs_warn("close for no service handler. fd=%d, ip=%s", fd, ip.c_str());
         srs_close_stfd(stfd);
         return NULL;

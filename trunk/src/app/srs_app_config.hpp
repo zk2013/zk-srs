@@ -234,6 +234,11 @@ public:
      * whether current directive is stream_caster.
      */
     virtual bool is_stream_caster();
+    /**
+     * whether current directive is danmu_svr.
+     */
+    virtual bool is_danmu_svr();
+
     // parse utilities
 public:
     /**
@@ -631,6 +636,12 @@ public:
      * get all stream_caster in config file.
      */
     virtual std::vector<SrsConfDirective*>  get_stream_casters();
+
+    /**
+     * get all danmu_svrs in config file.
+     */
+    virtual std::vector<SrsConfDirective*>  get_danmu_svrs();
+
     /**
      * get whether the specified stream_caster is enabled.
      */
@@ -647,6 +658,10 @@ public:
      * get the listen port of stream caster.
      */
     virtual int                 get_stream_caster_listen(SrsConfDirective* conf);
+    /**
+     * get the listen port of danmu svr.
+     */
+    virtual int                 get_danmu_svr_listen(SrsConfDirective* conf);
     /**
      * get the min udp port for rtp of stream caster rtsp.
      */

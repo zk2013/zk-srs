@@ -788,6 +788,11 @@ bool SrsConfDirective::is_stream_caster()
     return name == "stream_caster";
 }
 
+bool SrsConfDirective::is_danmu_svr()
+{
+    return name == "danmu_svr";
+}
+
 int SrsConfDirective::parse(SrsConfigBuffer* buffer)
 {
     return parse_conf(buffer, parse_file);
@@ -4295,6 +4300,25 @@ vector<SrsConfDirective*> SrsConfig::get_stream_casters()
     return stream_casters;
 }
 
+vector<SrsConfDirective*> SrsConfig::get_danmu_svrs()
+{
+    srs_assert(root);
+    
+    std::vector<SrsConfDirective*> danmu_svrs;
+    
+    for (int i = 0; i < (int)root->directives.size(); i++) {
+        SrsConfDirective* conf = root->at(i);
+        
+        if (!conf->is_danmu_svr()) {
+            continue;
+        }
+        
+        danmu_svrs.push_back(conf);
+    }
+    
+    return danmu_svrs;
+}
+
 bool SrsConfig::get_stream_caster_enabled(SrsConfDirective* conf)
 {
     static bool DEFAULT = false;
@@ -4344,6 +4368,22 @@ string SrsConfig::get_stream_caster_output(SrsConfDirective* conf)
 }
 
 int SrsConfig::get_stream_caster_listen(SrsConfDirective* conf)
+{
+    static int DEFAULT = 0;
+    
+    if (!conf) {
+        return DEFAULT;
+    }
+    
+    conf = conf->get("listen");
+    if (!conf || conf->arg0().empty()) {
+        return DEFAULT;
+    }
+    
+    return ::atoi(conf->arg0().c_str());
+}
+
+int SrsConfig::get_danmu_svr_listen(SrsConfDirective* conf)
 {
     static int DEFAULT = 0;
     

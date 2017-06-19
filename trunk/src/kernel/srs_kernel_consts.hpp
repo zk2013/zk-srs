@@ -73,6 +73,8 @@
 // TODO: FIXME: use ms for timeout.
 #define SRS_CONSTS_RTMP_TMMS (30*1000)
 
+#define SRS_CONSTS_MARS_TMMS SRS_CONSTS_RTMP_TMMS
+
 // the timeout to wait for client control message,
 // if timeout, we generally ignore and send the data to client,
 // generally, it's the pulse time for data seding.

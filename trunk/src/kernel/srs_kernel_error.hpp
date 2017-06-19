@@ -305,7 +305,7 @@
 #define ERROR_KAFKA_CODEC_MESSAGE           4036
 #define ERROR_KAFKA_CODEC_PRODUCER          4037
 #define ERROR_HTTP_302_INVALID              4038
-
+#define ERROR_DANMU_SVR_PORT                4040
 ///////////////////////////////////////////////////////
 // HTTP API error.
 ///////////////////////////////////////////////////////
