@@ -30,6 +30,7 @@
 
 #include <srs_app_st.hpp>
 #include <srs_app_conn.hpp>
+#include <srs_mars_stack.hpp>
 
 class SrsServer;
 
@@ -40,6 +41,7 @@ class SrsMarsConn : public virtual SrsConnection
 {
 private:
     SrsServer* server;
+    SrsMarsServer* mars;
 public:
     SrsMarsConn(SrsServer* svr, st_netfd_t c, std::string cip);
     virtual ~SrsMarsConn();

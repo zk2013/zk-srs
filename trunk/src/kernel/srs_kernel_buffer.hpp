@@ -109,6 +109,7 @@ public:
      * @remark, return error when size is not positive.
      */
     virtual int initialize(char* b, int nb);
+    virtual int append(char* b, int nb);
     // get the status of stream
 public:
     /**
@@ -136,6 +137,8 @@ public:
      * @remark assert required_size positive.
      */
     virtual bool require(int required_size);
+    virtual bool is_data_avail(int required_size);
+
     // to change stream.
 public:
     /**

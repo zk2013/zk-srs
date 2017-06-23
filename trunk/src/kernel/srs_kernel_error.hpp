@@ -306,6 +306,9 @@
 #define ERROR_KAFKA_CODEC_PRODUCER          4037
 #define ERROR_HTTP_302_INVALID              4038
 #define ERROR_DANMU_SVR_PORT                4040
+
+#define ERROR_UNPACK_PKT_HDR                4041
+#define ERROR_UNPACK_PKT_BODY               4042
 ///////////////////////////////////////////////////////
 // HTTP API error.
 ///////////////////////////////////////////////////////

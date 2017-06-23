@@ -60,6 +60,26 @@ void SrsBuffer::set_value(char* b, int nb_b)
     srs_assert(srs_is_little_endian());
 }
 
+int SrsBuffer::append(char *b, int nb)
+{
+    int ret = ERROR_SUCCESS;
+
+    if (NULL == bytes)
+    {
+        return initialize(b, nb);
+    }
+
+    int left_len = bytes + nb_bytes - p;
+    char *new_bytes = new char[nb + left_len];
+    memcpy(new_bytes, p, left_len);
+    memcpy(new_bytes + left_len, b, nb);
+    nb_bytes = nb + left_len;
+    srs_freep(bytes);
+    srs_freep(b);
+    p = bytes = new_bytes;
+    return ret;
+}
+
 int SrsBuffer::initialize(char* b, int nb)
 {
     int ret = ERROR_SUCCESS;
@@ -108,6 +128,11 @@ bool SrsBuffer::require(int required_size)
     srs_assert(required_size >= 0);
     
     return required_size <= nb_bytes - (p - bytes);
+}
+
+bool SrsBuffer::is_data_avail(int required_size) {
+    srs_assert(required_size >= 0);
+    return bytes && (p <= (bytes + nb_bytes - required_size) );
 }
 
 void SrsBuffer::skip(int size)

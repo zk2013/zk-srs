@@ -49,7 +49,7 @@ SrsMarsConn::SrsMarsConn(SrsServer* svr, st_netfd_t c, string cip)
 {
     server = svr;
     
-    //rtmp = new SrsRtmpServer(skt);
+    mars = new SrsMarsServer(skt);
     kbps = new SrsKbps();
     kbps->set_io(skt, skt);
 }
@@ -72,6 +72,7 @@ int SrsMarsConn::do_cycle()
     
     srs_trace("MARS client ip=%s, fd=%d", ip.c_str(), st_netfd_fileno(stfd));
 
+    ret = service_cycle();
     /*rtmp->set_recv_timeout(SRS_CONSTS_MARS_TMMS);
     rtmp->set_send_timeout(SRS_CONSTS_MARS_TMMS);
     
@@ -183,6 +184,10 @@ void SrsMarsConn::cleanup()
 int SrsMarsConn::service_cycle()
 {
     int ret = ERROR_SUCCESS;
-
+    while(!disposed) {
+        if (ERROR_SUCCESS != mars->service_impl() ) {
+            dispose();
+        }
+    }
     return ret;
 }
